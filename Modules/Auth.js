@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+const mongoose = require("mongoose")
 const userSchema = new mongoose.Schema({
   fullname: {
     type: String,
@@ -24,14 +23,22 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required : true
+    required: true
   },
-  isverified:{
+  isEmailVerified: {
     type: Boolean,
-    required:true
+    default: false
+  },
+  resetToken: {
+    type: String,
+    default: null
+  },
+  resetTokenExpiration: {
+    type: Date,
+    default: null
   }
 });
 
-const User = mongoose.model('Patient', userSchema);
+const User = mongoose.model('patient', userSchema);
 
 module.exports = User;
