@@ -121,7 +121,64 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = login;
+// Initial Password reset 
+const initiatePasswordReset = async (req, res) => {
+  try {
+
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const resetToken = generateResetToken();
+
+    user.resetToken = resetToken;
+    user.resetTokenExpiration = Date.now() + 3600000;
+    await user.save();
+
+    sendPasswordResetEmail(user.email, resetToken);
+
+    res.json({ message: 'Password reset email sent' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'An error occurred' });
+  }
+};
+
+// Password Reset after login
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    // Find the user with the provided token and check if it is still valid
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiration: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    // Reset the user's password
+    user.password = password;
+    user.resetToken = undefined;
+    user.resetTokenExpiration = undefined;
+    await user.save();
+
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'An error occurred' });
+  }
+};
 
 
-module.exports = { AddUser, login,verifyMail }
+
+
+module.exports = { AddUser, login,verifyMail,initiatePasswordReset,resetPassword }
