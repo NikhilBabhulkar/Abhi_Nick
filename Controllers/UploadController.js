@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const audioCheck = require('../Services/AudioCheck.js');
 const { json } = require('body-parser');
-const outputFolder = path.join(__dirname, '..', 'uploads', 'audio');
+const outputFolder = path.join(__dirname, '..', 'uploads','user1');
 
 const uploadAudio = (req, res, err) => {
   if (err) {
@@ -16,7 +16,7 @@ const uploadAudio = (req, res, err) => {
   const outputPath = path.join(outputFolder);
   // Move the file to the desired folder
 
-  
+
   fs.rename(tempPath, outputPath, async (err) => {
     if (err) {
       res.status(500).json({ error: 'Error saving the audio file' });
@@ -24,9 +24,9 @@ const uploadAudio = (req, res, err) => {
       return;
     }
     try {
-      const condition = await audioCheck()
+      const condition = await audioCheck(outputFolder)
       if (condition) {
-        console.log("here");
+        //console.log("here");
         res.status(200).json({ message: 'Audio Submitted' });
         return
       }

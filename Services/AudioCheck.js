@@ -2,10 +2,10 @@ const fs = require('fs');
 const wav = require('node-wav');
 const path = require('path')
 
-const audioCheck = () => {
+const audioCheck = (file) => {
     return new Promise((resolve, reject) => {
       // Create an audio context
-      const audioFile = path.join(__dirname, '..', 'uploads', 'audio');
+      const audioFile = file;
       console.log("in audio check");
       fs.readFile(audioFile, (error, data) => {
         if (error) {
